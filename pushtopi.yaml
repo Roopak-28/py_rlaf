@@ -4,7 +4,7 @@ inputs:
   - name: access_token
     type: string
   - name: updates_list
-    type: string
+    type: String
 implementation:
   container:
     image: python:3.9
