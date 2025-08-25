@@ -4,7 +4,7 @@ inputs:
   - name: access_token
     type: string
   - name: base_url
-    type: string
+    type: String
   - name: schema_id
     type: String
 outputs:
