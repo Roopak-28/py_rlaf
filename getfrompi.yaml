@@ -2,10 +2,10 @@ name: Get from Pi
 description: Fetches database instance data and outputs it as a JSON string.
 inputs:
   - name: access_token
-    type: String
+    type: string
 outputs:
   - name: db_data_json
-    type: String
+    type: string
 implementation:
   container:
     image: python:3.9
