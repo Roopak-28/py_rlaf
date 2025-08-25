@@ -1,6 +1,8 @@
 name: Push To Pi
 description: Updates specified fields in database instances.
 inputs:
+  - name: access_token
+    type: String
   - name: updates_list
     type: String
 implementation:
@@ -20,24 +22,9 @@ implementation:
         import argparse, json, requests, os
 
         parser = argparse.ArgumentParser()
+        parser.add_argument('--access_token', type=str, required=True)
         parser.add_argument('--updates_list', type=str, required=True)
         args = parser.parse_args()
-
-        def get_access_token():
-            login_url = "https://ig.mobiusdtaas.ai/mobius-iam-service/v1.0/login"
-            headers = {
-                "content-type": "application/json",
-                "mask": "false"
-            }
-            payload = {
-                "userName": "aidtaas@gaiansolutions.com",
-                "password": "Gaian@123",
-                "productId": "c2255be4-ddf6-449e-a1e0-b4f7f9a2b636",
-                "requestType": "TENANT"
-            }
-            response = requests.post(login_url, headers=headers, json=payload)
-            response.raise_for_status()
-            return response.json()["accessToken"]
 
         def update_instance(access_token, instance_id, field_to_update, new_value):
             update_url = "https://ig.mobiusdtaas.ai/pi-entity-instances-service/v2.0/schemas/68a44cd2eed84d47877a3f5e/instances"
@@ -72,8 +59,7 @@ implementation:
             response.raise_for_status()
             return response.json()
 
-        token = get_access_token()
-
+        # Load updates from file
         with open(args.updates_list, 'r') as f:
             updates_list_content = f.read()
 
@@ -88,8 +74,10 @@ implementation:
             field_to_update = update_item["field_to_update"]
             new_value = update_item["new_value"]
             print(f"Attempting to update instance {instance_id}, field {field_to_update} with new value.")
-            update_instance(token, instance_id, field_to_update, new_value)
+            update_instance(args.access_token, instance_id, field_to_update, new_value)
             print(f"Updated instance {instance_id}, field {field_to_update} successfully.")
     args:
+      - --access_token
+      - { inputValue: access_token }
       - --updates_list
       - { inputPath: updates_list }
