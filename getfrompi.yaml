@@ -5,7 +5,7 @@ inputs:
     type: string
 outputs:
   - name: db_data_json
-    type: string
+    type: String
 implementation:
   container:
     image: python:3.9
