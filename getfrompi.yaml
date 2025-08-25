@@ -2,7 +2,11 @@ name: Get from Pi
 description: Fetches database instance data and outputs it as a JSON string.
 inputs:
   - name: access_token
-    type: string
+    type: String
+  - name: base_url
+    type: String
+  - name: schema_id
+    type: String
 outputs:
   - name: db_data_json
     type: String
@@ -24,11 +28,13 @@ implementation:
 
         parser = argparse.ArgumentParser()
         parser.add_argument('--access_token', type=str, required=True)
+        parser.add_argument('--base_url', type=str, required=True)
+        parser.add_argument('--schema_id', type=str, required=True)
         parser.add_argument('--db_data_json', type=str, required=True)
         args = parser.parse_args()
 
-        def get_instances(access_token):
-            instances_url = "https://ig.mobiusdtaas.ai/pi-entity-instances-service/v3.0/schemas/68a44cd2eed84d47877a3f5e/instances/list"
+        def get_instances(access_token, base_url, schema_id):
+            instances_url = f"{base_url}/pi-entity-instances-service/v3.0/schemas/{schema_id}/instances/list"
             headers = {
                 "Authorization": f"Bearer {access_token}",
                 "Content-Type": "application/json"
@@ -44,7 +50,7 @@ implementation:
             response.raise_for_status()
             return response.json()
 
-        db_data = get_instances(args.access_token)
+        db_data = get_instances(args.access_token, args.base_url, args.schema_id)
 
         os.makedirs(os.path.dirname(args.db_data_json), exist_ok=True)
         with open(args.db_data_json, 'w') as f:
@@ -53,5 +59,9 @@ implementation:
     args:
       - --access_token
       - { inputValue: access_token }
+      - --base_url
+      - { inputValue: base_url }
+      - --schema_id
+      - { inputValue: schema_id }
       - --db_data_json
       - { outputPath: db_data_json }
