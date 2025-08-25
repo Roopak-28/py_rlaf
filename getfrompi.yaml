@@ -1,5 +1,8 @@
 name: Get from Pi
 description: Fetches database instance data and outputs it as a JSON string.
+inputs:
+  - name: access_token
+    type: String
 outputs:
   - name: db_data_json
     type: String
@@ -20,24 +23,9 @@ implementation:
         import argparse, json, requests, os
 
         parser = argparse.ArgumentParser()
+        parser.add_argument('--access_token', type=str, required=True)
         parser.add_argument('--db_data_json', type=str, required=True)
         args = parser.parse_args()
-
-        def get_access_token():
-            login_url = "https://ig.mobiusdtaas.ai/mobius-iam-service/v1.0/login"
-            headers = {
-                "content-type": "application/json",
-                "mask": "false"
-            }
-            payload = {
-                "userName": "aidtaas@gaiansolutions.com",
-                "password": "Gaian@123",
-                "productId": "c2255be4-ddf6-449e-a1e0-b4f7f9a2b636",
-                "requestType": "TENANT"
-            }
-            response = requests.post(login_url, headers=headers, json=payload)
-            response.raise_for_status()
-            return response.json()["accessToken"]
 
         def get_instances(access_token):
             instances_url = "https://ig.mobiusdtaas.ai/pi-entity-instances-service/v3.0/schemas/68a44cd2eed84d47877a3f5e/instances/list"
@@ -56,13 +44,14 @@ implementation:
             response.raise_for_status()
             return response.json()
 
-        token = get_access_token()
-        db_data = get_instances(token)
+        db_data = get_instances(args.access_token)
 
         os.makedirs(os.path.dirname(args.db_data_json), exist_ok=True)
         with open(args.db_data_json, 'w') as f:
             f.write(json.dumps(db_data))
         print(f"Database data fetched and written to {args.db_data_json}")
     args:
+      - --access_token
+      - { inputValue: access_token }
       - --db_data_json
       - { outputPath: db_data_json }
