@@ -2,9 +2,9 @@ name: Push To Pi
 description: Updates specified fields in database instances.
 inputs:
   - name: access_token
-    type: String
+    type: string
   - name: base_url
-    type: String
+    type: string
   - name: schema_id
     type: String
   - name: updates_list
