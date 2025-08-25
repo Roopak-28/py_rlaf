@@ -2,9 +2,9 @@ name: Push To Pi
 description: Updates specified fields in database instances.
 inputs:
   - name: access_token
-    type: String
+    type: string
   - name: updates_list
-    type: String
+    type: string
 implementation:
   container:
     image: python:3.9
