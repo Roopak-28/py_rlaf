@@ -2,9 +2,9 @@ name: Get from Pi
 description: Fetches database instance data and outputs it as a JSON string.
 inputs:
   - name: access_token
-    type: String
+    type: string
   - name: base_url
-    type: String
+    type: string
   - name: schema_id
     type: String
 outputs:
